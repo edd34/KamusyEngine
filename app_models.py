@@ -2,7 +2,11 @@ from datetime import datetime
 from marshmallow import fields, validate
 from .shared_models import db, ma
 
-
+def dump_datetime(value):
+    """Deserialize datetime object into string form for JSON processing."""
+    if value is None:
+        return None
+    return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
 
 class Word(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -11,6 +15,16 @@ class Word(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     def __repr__(self):
         return '<Word %r>' % self.id
+
+    @property
+    def serialize(self):
+       """Return object data in easily serializable format"""
+       return {
+           'id' : self.id,
+           'date_created': dump_datetime(self.date_created),
+           'language': self.language,
+           'name': self.name
+        }
 
 class WordShema(ma.Schema):
     name = fields.String()
