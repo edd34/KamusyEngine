@@ -1,0 +1,44 @@
+Routes :
+* GET "/languages" - // récupérer toutes les langues
+réponses :
+200, {
+    languages: [
+        {
+            id,
+            name,
+            date,..
+        }, ... 
+    ]
+}
+
+* GET "/language/:id" - // récupérer une langue à partir de son id
+réponses :
+200, {
+        id,
+        name,
+        date,..
+}
+
+* POST "/language" - //ajouter une langue
+body : 
+{
+    name: string
+}
+response :
+200, {
+        id,
+        name,
+        date,..
+}
+
+* UPDATE "/language/:id" - //ajouter une langue
+body : 
+{
+    name: string
+}
+response :
+200, {
+        id,
+        name,
+        date,..
+}
