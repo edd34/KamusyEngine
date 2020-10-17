@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask import Flask, render_template, url_for, request, redirect
 from flask import jsonify
 from .shared_models import db
-from .app_models import Word, Languages
+from .app_models import Word, Languages, Dict
 
 api_component = Blueprint("api", __name__)
 
@@ -119,3 +119,45 @@ def update_language(id):
 def delete_language(id):
     Languages.query.filter_by(id=id).delete()
     return jsonify(), 200
+
+# dict api
+@api_component.route('/dict', methods=['POST'])
+def add_translation():
+    body = request.get_json()
+
+    language1 = Languages(name=body["language1"])
+    language2 = Languages(name=body["language2"])
+    db.session.add(language1)
+    db.session.add(language2)
+    db.session.commit()
+    
+    word1 = Word(name=body["word1"], language=language1.id)
+    word2 = Word(name=body["word2"], language=language2.id)
+    db.session.add(word1)
+    db.session.add(word2)
+    db.session.commit()
+
+    translation = Dict(id_word1=word1.id, id_word2=word2.id)
+    db.session.add(translation)
+    db.session.commit()
+    return jsonify(id=translation.id), 200
+
+# dict api
+@api_component.route('/dicts', methods=['GET'])
+def get_all_translation():
+    res = []
+    dict_id = Dict.query.all()
+    print(dict_id)
+    for id in dict_id:
+        tmp = {}
+        current_word = Word.query.filter_by(id=id.id_word1).first()
+        current_word_language = Languages.query.filter_by(id=current_word.id).first()
+        translated_word = Word.query.filter_by(id=id.id_word2).first()
+        translated_word_language = Languages.query.filter_by(id=translated_word.id).first()
+        tmp["current_word_name"] = current_word.name
+        tmp["current_word_language"] = current_word_language.name
+        tmp["translated_word_name"] = translated_word.name
+        tmp["translated_word_language"] = translated_word_language.name
+        
+        res.append(tmp)
+    return jsonify(res=res), 200
