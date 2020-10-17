@@ -36,6 +36,15 @@ class Languages(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     def __repr__(self):
         return '<Language %r>' % self.id
+    
+    @property
+    def serialize(self):
+       """Return object data in easily serializable format"""
+       return {
+           'id' : self.id,
+           'date_created': dump_datetime(self.date_created),
+           'name': self.name
+        }
 
 class LanuguageShema(ma.Schema):
     name = fields.String()
