@@ -49,11 +49,11 @@ class Languages(db.Model):
 class LanuguageShema(ma.Schema):
     name = fields.String()
 
-class Relation(db.Model):
+class Dict(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_word1 = db.Column(db.Integer, nullable=False)
     id_word2 = db.Column(db.Integer, nullable=False)
 
-class RelationShema(ma.Schema):
+class DictSchema(ma.Schema):
     id_word1 = fields.Integer()
     id_word2 = fields.Integer()
