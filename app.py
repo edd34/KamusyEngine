@@ -1,10 +1,11 @@
-from flask import Flask, render_template, url_for, request, redirect
+"""
+    This is the main entry for KamusyEngine
+"""
+
+from flask import Flask
 from flask_cors import CORS
-from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
 from .api import api_component
-from .shared_models import db, ma
+from .shared_models import db
 app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///kamusy.db'
