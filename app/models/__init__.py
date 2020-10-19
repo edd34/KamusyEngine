@@ -1,11 +1,4 @@
-"""
-    Shared models is contains SQLAlchemy and Marshamallow Singleton
-"""
-
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-db = SQLAlchemy()
-ma = Marshmallow()
+from app import db
 
 def get_or_add(model, **kwargs):
     """ Get or add a model.
