@@ -37,9 +37,16 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install all req
 pip3 install -r requirements.txt
 ```
 
+## Usage
+
 ### Run flask app
 ```bash
-flask run
+python3 main.app
+```
+
+### Run test
+```bash
+python3 app/test/test.py
 ```
 
 ## Contributing
