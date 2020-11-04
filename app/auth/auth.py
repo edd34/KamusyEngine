@@ -15,6 +15,7 @@ def login():
     user = User.query.filter_by(email=body["email"]).first()
 
     # Check if user is confirmed for return is organisation and domain
+
     # if user.confirmed == False:
     #     return jsonify({
     #         'result': False,
@@ -24,15 +25,12 @@ def login():
     #         'user_is_confirmed': False
     #     }), 403
 
-    if user.verify_password(body["password"]) == False:
+    if user is None or  user.verify_password(body["password"]) == False:
         return jsonify({
             'result': False,
-            'redirect': '/InstantRecommendation',
-            'message': 'Wrong password',
-            'user_email': user.email,
-            'user_is_confirmed': False
+            'redirect': None,
+            'message': 'Wrong id or password',
         }), 403
-        pass
 
     token = jwt.encode({
         'id': str(user.id),
@@ -50,9 +48,11 @@ def login():
 def register():
 
     body = request.get_json()
-
     secret_key = str(current_app.config['SECRET_KEY'])
     user = User(user_name=body["user_name"], email=body["email"])
+
+    User.query.filter_by(user_name=body["user_name"])
+
     user.password = body["password"]
     db.session.add(user)
     db.session.commit()
@@ -66,12 +66,12 @@ def token_required(something):
         try:
             token_passed = request.headers['TOKEN']
             SECRET_KEY = str(current_app.config['SECRET_KEY'])
-            if request.headers['TOKEN'] != '' and request.headers['TOKEN'] != None:
+            if token_passed != '' and token_passed != None:
                 try:
                     data = jwt.decode(token_passed,SECRET_KEY, algorithms=['HS256'])
                     token_exp = datetime.datetime.fromtimestamp(data["exp"])
                     print(token_exp, datetime.datetime.now())
-                    print(token_exp < datetime.datetime.now())
+                    # print(token_exp < datetime.datetime.now())
                     return something()
                 except jwt.exceptions.ExpiredSignatureError:
                     return_data = {
@@ -97,5 +97,5 @@ def token_required(something):
                 "error" : "4",
                 "message" : "An error occured"
                 }
-            # return jsonify(response=return_data), 500
+            return jsonify(response=return_data), 500
     return wrap
