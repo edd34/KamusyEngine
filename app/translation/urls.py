@@ -13,6 +13,7 @@ def url_get_all_translation():
 
 @cross_origin()
 @translation_component.route('/translations', methods=['POST'])
+@token_required
 def url_add_translation():
     body = request.get_json()
     print("body", body)
