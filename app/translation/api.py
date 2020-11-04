@@ -5,7 +5,6 @@ from app.language.models import Language
 from app.word.models import Word
 from app.translation.models import Translation
 from marshmallow import ValidationError
-from app.translation.serializers import TranslationSchema
 
 def add_translation(body):
     """ Add a translation in the database.
@@ -23,8 +22,7 @@ def add_translation(body):
         if Translation.query.filter_by(word1_id=word1.id, word2_id=word2.id).first():
             raise ValidationError("This translation already exists")
 
-        translation = Translation(word1_id=word1.id, word2_id=word2.id)
-        data = TranslationSchema().load(translation)
+        translation = Translation(word1_id=int(word1.id), word2_id=int(word2.id))
     except ValidationError as err:
         db.session.rollback()
         return {"error":err.messages}, 422

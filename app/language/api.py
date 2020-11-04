@@ -4,7 +4,6 @@ from app import db
 def get_all_languages():
     """ Get all languages in the database"""
     all_languages = Language.query.order_by(Language.name).all()
-    import pdb; pdb.set_trace()
     return [i.serialize for i in all_languages]
 
 def get_language(language_id):

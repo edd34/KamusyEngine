@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 
 word_component = Blueprint("word_api", __name__)
 
-@word_component.route('/words/', methods=['GET'])
+@word_component.route('/words', methods=['GET'])
 @cross_origin()
 def url_get_all_words():
     result = get_all_words()
@@ -18,7 +18,7 @@ def url_get_word(word_id):
     word = get_word(word_id)
     return jsonify(dict(results=word)), 200
 
-@word_component.route('/word/', methods=['POST'])
+@word_component.route('/word', methods=['POST'])
 @cross_origin()
 def url_add_word():
     try:

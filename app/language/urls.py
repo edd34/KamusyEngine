@@ -8,19 +8,19 @@ from flask import Blueprint
 language_component = Blueprint("language_api", __name__)
 
 @cross_origin()
-@language_component.route('/languages/', methods=['GET'])
+@language_component.route('/languages', methods=['GET'])
 def url_get_all_word():
     all_languages = get_all_languages()
     return jsonify(dict(languages=all_languages)), 200
 
 @cross_origin()
-@language_component.route('/language/<int:language_id>', methods=['GET'])
+@language_component.route('/languages/<int:language_id>', methods=['GET'])
 def url_get_language(language_id):
     language = get_language(language_id)
     return jsonify(dict(language=language))
 
 @cross_origin()
-@language_component.route('/language/', methods=['POST'])
+@language_component.route('/languages', methods=['POST'])
 def url_add_language():
     try:
         data = LanguageSchema().load(request.get_json())

@@ -9,6 +9,5 @@ class TranslationSchema(ma.Schema):
 
     @validates_schema
     def validate_translation_schema(self, data, **kwargs):
-        import pdb; pdb.set_trace()
         if Translation.query.filter_by(word1_id=data["word1_id"], word2_id=data["word2_id"]).first():
             raise ValidationError("This translation already exists")
