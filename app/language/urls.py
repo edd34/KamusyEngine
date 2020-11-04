@@ -4,6 +4,7 @@ from app.language.api import get_all_languages, get_language, add_language
 from app.language.serializers import LanguageSchema
 from marshmallow import ValidationError
 from flask import Blueprint
+from app.auth.auth import token_required
 
 language_component = Blueprint("language_api", __name__)
 
@@ -21,6 +22,7 @@ def url_get_language(language_id):
 
 @cross_origin()
 @language_component.route('/languages', methods=['POST'])
+@token_required
 def url_add_language():
     try:
         data = LanguageSchema().load(request.get_json())
