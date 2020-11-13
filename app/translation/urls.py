@@ -16,7 +16,6 @@ def url_get_all_translation():
 @token_required
 def url_add_translation():
     body = request.get_json()
-    print("body", body)
     result, code = add_translation(body)
     return jsonify(dict(result=result)), code
 
