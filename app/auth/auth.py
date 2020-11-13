@@ -1,4 +1,5 @@
 from flask import Blueprint, current_app, jsonify, request
+from flask_mail import Message, Mail
 from app.user.models import User
 import datetime
 from app import db
@@ -25,7 +26,7 @@ def login():
     #         'user_is_confirmed': False
     #     }), 403
 
-    if user is None or  user.verify_password(body["password"]) == False:
+    if user is None or user.verify_password(body["password"]) == False:
         return jsonify({
             'result': False,
             'redirect': None,
@@ -34,7 +35,7 @@ def login():
 
     token = jwt.encode({
         'id': str(user.id),
-        'exp': datetime.datetime.now() + datetime.timedelta(minutes=60)
+        'exp': datetime.datetime.now() + datetime.timedelta(days=0.5)
     }, secret_key, algorithm='HS256')
 
     return jsonify({
@@ -48,18 +49,65 @@ def login():
 def register():
 
     body = request.get_json()
+    user = User.query.filter_by(email=body["email"]).first()
+    if user:
+        return jsonify({
+        'result': False,
+        'message': 'email already exists',
+        'field': 'email'
+        }), 409
+
+    user = User.query.filter_by(user_name=body["user_name"]).first()
+    if user:
+        return jsonify({
+        'result': "error",
+        'message': 'username already exists',
+        'field': 'user_name'
+        }), 409
+
     secret_key = str(current_app.config['SECRET_KEY'])
     user = User(user_name=body["user_name"], email=body["email"])
-
-    User.query.filter_by(user_name=body["user_name"])
 
     user.password = body["password"]
     db.session.add(user)
     db.session.commit()
 
+    token = jwt.encode({'id': user.id}, secret_key, algorithm='HS256')
+
+    mail = Mail(current_app)
+    msg = Message(subject="Veuillez confirmer votre adresse email", recipients=[body["email"]])
+    lien = "http://localhost:5000/#/confirm?token="+str(token)[2:-1]
+    msg.html = "Bonjour, validez votre lien ici <a href='" + lien + "'>" + lien + "</a>"
+    res = mail.send(msg)
+
     return jsonify({
         'result': True,
     }), 200
+
+@auth.route('/confirm/<token>', methods=['GET'])
+def confirm_email(token):
+    SECRET_KEY = str(current_app.config['SECRET_KEY'])
+    data = jwt.decode(token,SECRET_KEY, algorithms=['HS256'])
+    user_id = data["id"]
+    user = User.query.filter_by(id=user_id).first()
+    if user.confirmed == False:
+        user.confirmed = True
+        db.session.commit()
+        mail = Mail(current_app)
+        msg = Message(subject="Confirmation adresse email", recipients=[user.email])
+        msg.body = "Bonjour, votre adresse email a bien été confirmée"
+        res = mail.send(msg)
+        return_data = {
+            "message": "success, account confirmed",
+            "id": user_id
+            }
+        return jsonify(response=return_data), 200
+    else:
+        return_data = {
+            "status": "warning",
+            "message": "success, account already confirmed",
+            }
+        return jsonify(response=return_data), 409
 
 def token_required(something):
     def wrap():
@@ -70,8 +118,6 @@ def token_required(something):
                 try:
                     data = jwt.decode(token_passed,SECRET_KEY, algorithms=['HS256'])
                     token_exp = datetime.datetime.fromtimestamp(data["exp"])
-                    print(token_exp, datetime.datetime.now())
-                    # print(token_exp < datetime.datetime.now())
                     return something()
                 except jwt.exceptions.ExpiredSignatureError:
                     return_data = {
