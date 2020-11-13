@@ -23,4 +23,5 @@ htmlcov/
 .coverage.*
 *,cover
 
-kamusy.db
+*.db
+config.ini
