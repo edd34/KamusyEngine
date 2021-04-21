@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from flask import jsonify, redirect, url_for, request
 from flask_restful import Resource, Api
-import time
 from src.ping import Ping
+from src.language.language_api import LanguageApi
+from src.translation.translation_api import TranslationApi
 
 #https://flask-restful.readthedocs.io/en/latest/quickstart.html
 class Router:
@@ -10,3 +10,5 @@ class Router:
         self.app = app
         self.api = Api(self.app)
         self.api.add_resource(Ping, '/ping')
+        self.api.add_resource(LanguageApi, '/language', '/language/<int:id>')
+        self.api.add_resource(TranslationApi, '/translations')
