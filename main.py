@@ -23,10 +23,10 @@ def enable_CORS(app):
     app.config['CORS_HEADERS'] = 'Access-Control-Allow-Origin'
     CORS(app)
 
+app = Flask(__name__)
+app.config["MONGO_URI"] = "mongodb://localhost:27017/kamusy"
+kamusy_db = PyMongo(app)
+Router(app)
 
 if __name__ == "__main__":
-    app = Flask(__name__)
-    app.config["MONGO_URI"] = "mongodb://localhost:27017/myDatabase"
-    mongo = PyMongo(app)
-    Router(app)
     app.run(debug=True)
