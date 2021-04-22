@@ -13,6 +13,5 @@ class LanguageApi(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=str, help='Rate to charge for this resource')
         args = parser.parse_args(strict=True)
-        
         add_language(args["name"])
         return 200
