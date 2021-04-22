@@ -5,7 +5,7 @@ from src.components.language.language_methods import get_language, get_all_langu
 class LanguageApi(Resource):
     def get(self):
         args = request.args
-        if args["id"] is None:
+        if not "id" in args.keys():
             return get_all_languages()
         return get_language(args["id"])
 

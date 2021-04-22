@@ -6,7 +6,7 @@ from src.core.databases import get_database_connection
 
 def get_all_languages():
     """ Get all languages in the database"""
-    all_languages = get_database_connection().language.find({})
+    all_languages = get_database_connection().language.find()
     return json.loads(dumps(list(all_languages)))
 
 def get_language(language_id):
