@@ -11,11 +11,9 @@ def get_all_languages():
 
 def get_language(language_id):
     """ Get language which id is given in param"""
-    print(language_id)
     all_languages = get_database_connection().language.find({"_id":ObjectId(language_id)})
     return json.loads(dumps(list(all_languages)))
 
 def add_language(name):
     """ Add a language in the database"""
-    res = get_database_connection().language.insert_one({"name": name})
-    return res
+    get_database_connection().language.insert_one({"name": name})

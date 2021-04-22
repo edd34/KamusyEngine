@@ -1,22 +1,22 @@
-from flask import request
-from app import db
-from app.word.models import Word
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import json
+from bson.json_util import dumps, loads, ObjectId
+from src.core.databases import get_database_connection
 
 
 def get_all_words():
     """ Get all words in  """
-    words_list = Word.query.order_by(Word.name).all()
-    return [i.serialize for i in words_list]
+    all_words = get_database_connection().word.find()
+    return json.loads(dumps(list(all_words)))
 
 
 def get_word(word_id):
     """ Get a word which id is given in param  """
-    word = Word.query.filter_by(id=word_id).one()
-    return word
+    word = get_database_connection().word.find({"_id": ObjectId(word_id)})
+    return json.loads(dumps(list(word)))
 
-def add_word(body):
+
+def add_word(name):
     """ Get Add a word to the database  """
-    word = Word(name=body["name"], language_id=body["language_id"])
-    db.session.add(word)
-    db.session.commit()
-    return word.serialize
+    word = get_database_connection().word.insert_one({"name": name})

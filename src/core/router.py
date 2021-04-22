@@ -11,6 +11,6 @@ class Router:
         self.app = app
         self.api = Api(self.app)
         self.api.add_resource(Ping, '/ping')
-        self.api.add_resource(LanguageApi, '/language', '/language?id=<int:id>')
+        self.api.add_resource(LanguageApi, '/language', '/language?id=<id>')
         self.api.add_resource(TranslationApi, '/translations')
-        self.api.add_resource(WordApi, '/word', '/word/<int:id>')
+        self.api.add_resource(WordApi, '/word', '/word?id=<id>')
