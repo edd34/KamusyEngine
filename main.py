@@ -3,10 +3,10 @@
 """
 # from app import create_app, enable_CORS, register_blueprint, init_db
 from flask import Flask
-from flask_pymongo import PyMongo
 from configparser import ConfigParser
 import json
-from src.router import Router
+from src.core.router import Router
+from src.core.databases import MongoClient
 
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -24,8 +24,8 @@ def enable_CORS(app):
     CORS(app)
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb://localhost:27017/kamusy"
-kamusy_db = PyMongo(app)
+# app.config["MONGO_URI"] = "mongodb://localhost:27017/kamusy"
+kamusy_db = MongoClient()
 Router(app)
 
 if __name__ == "__main__":
